@@ -22,77 +22,97 @@
                 </tr>
             </tbody>
         </table>-->
-
-        <el-table :data="studentList" stripe style="width: 100%">
-            <el-table-column prop="id" label="学号">
-                <template #default="scope">
-                    <el-input
-                        v-if="scope.row.isEdit"
-                        v-model="scope.row.id"
-                        type="text"
-                        placeholder="请填写"
-                    />
-                    <span v-else>{{ scope.row.id }}</span>
-                </template>
-            </el-table-column>
-            <el-table-column prop="name" label="姓名">
-                <template #default="scope">
-                    <el-input
-                        v-if="scope.row.isEdit"
-                        v-model="scope.row.name"
-                        type="text"
-                        placeholder="请填写"
-                    />
-                    <span v-else>{{ scope.row.name }}</span>
+        <div>
+            <!--el-table :data="studentList" stripe style="width: 100%"-->
+            <el-table :data="students_page" @sort-change="handleSortChange" stripe style="width: 100%">
+                <el-table-column prop="id" sortable label="学号">
+                    <template #default="scope">
+                        <el-input
+                            v-if="scope.row.isEdit"
+                            v-model="scope.row.id"
+                            type="text"
+                            placeholder="请填写"
+                        />
+                        <span v-else>{{ scope.row.id }}</span>
                     </template>
-            </el-table-column>
-            <el-table-column prop="gender" label="性别">
-                <template #default="scope">
-                    <el-input
-                        v-if="scope.row.isEdit"
-                        v-model="scope.row.gender"
-                        type="text"
-                        placeholder="请填写"
-                    />
-                    <span v-else>{{ scope.row.gender }}</span>
+                </el-table-column>
+                <el-table-column prop="name" label="姓名">
+                    <template #default="scope">
+                        <el-input
+                            v-if="scope.row.isEdit"
+                            v-model="scope.row.name"
+                            type="text"
+                            placeholder="请填写"
+                        />
+                        <span v-else>{{ scope.row.name }}</span>
+                        </template>
+                </el-table-column>
+                <el-table-column prop="gender" label="性别">
+                    <template #default="scope">
+                        <el-input
+                            v-if="scope.row.isEdit"
+                            v-model="scope.row.gender"
+                            type="text"
+                            placeholder="请填写"
+                        />
+                        <span v-else>{{ scope.row.gender }}</span>
+                        </template>
+                </el-table-column>
+                <el-table-column prop="gpa" sortable label="绩点">
+                    <template #default="scope">
+                        <el-input
+                            v-if="scope.row.isEdit"
+                            v-model="scope.row.gpa"
+                            type="number"
+                            placeholder="请填写"
+                        />
+                        <span v-else>{{ scope.row.gpa }}</span>
+                        </template>
+                </el-table-column>
+                <el-table-column label="操作" fixed="right">
+                    <template #default="scope">
+                        <div v-if="scope.row.isEdit">
+                            <el-button type="primary" @click="handleRowSave(scope.row)">保存</el-button>
+                            <el-button type="danger" @click="handleRowCancel(scope.row, scope.$index)">取消</el-button>
+                        </div>
+                        <div v-else>
+                            <el-button type="primary" @click="handleRowEdit(scope.row)">编辑</el-button>
+                            <el-button type="danger" @click="handleRowDelete(scope.$index)">删除</el-button>
+                        </div>
                     </template>
-            </el-table-column>
-            <el-table-column prop="gpa" label="绩点">
-                <template #default="scope">
-                    <el-input
-                        v-if="scope.row.isEdit"
-                        v-model="scope.row.gpa"
-                        type="number"
-                        placeholder="请填写"
-                    />
-                    <span v-else>{{ scope.row.gpa }}</span>
-                    </template>
-            </el-table-column>
-            <el-table-column label="操作" fixed="right">
-                <template #default="scope">
-                    <div v-if="scope.row.isEdit">
-                        <el-button type="primary" @click="handleRowSave(scope.row)">保存</el-button>
-                        <el-button type="danger" @click="handleRowCancel(scope.row, scope.$index)">取消</el-button>
-                    </div>
-                    <div v-else>
-                        <el-button type="primary" @click="handleRowEdit(scope.row)">编辑</el-button>
-                        <el-button type="danger" @click="handleRowDelete(scope.$index)">删除</el-button>
-                    </div>
-                </template>
-            </el-table-column>
-        </el-table>
+                </el-table-column>
+            </el-table>
+        </div>
+        <div>
+            <el-pagination
+                @size-change="handleSizeChange" 
+                @current-change="handleCurrentChange" 
+                :page-size="pageSize" 
+                :current-page="currentPage" 
+                :page-sizes="[5, 10, 20, 40, 100]" 
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="studentList.length">
+            </el-pagination>
+        </div>
 </template>
 <script>
 import axios from "axios"
-import { set } from 'lodash-es'
+import { set, cloneDeep } from 'lodash-es'
 //import { ElButton } from "element-plus"
 
 export default {
     data() {
         return {
             studentList: [],
-            courseList: []
+            currentPage : 1,
+            pageSize : 5
         };
+    },
+    computed : { // 分页显示
+      students_page() {
+        return this.studentList.slice((this.currentPage - 1) * this.pageSize, 
+                                    this.currentPage * this.pageSize);
+      }
     },
     methods: {
         getStudentList() {
@@ -104,18 +124,9 @@ export default {
             });
         },
 
-        getCourseList() {
-            axios({
-                url: "http://localhost:8100/course",
-                method: "GET"
-            }).then(res => {
-                this.courseList = res.data;
-            });
-        },
-
         // 新增联络人
         addStudent() {
-            this.studentList.push({
+            this.studentList.unshift({
                 id : '',
                 name: '',
                 gender: '',
@@ -126,7 +137,6 @@ export default {
                 gpa2: '',
                 isEdit: true, // 当这个值为true时表示可以编辑
                 isNew: true, // 当这个值为true时表示是新数据
-                isSave: false // 当这个值为false时表示未保存
             })
         },
 
@@ -139,8 +149,8 @@ export default {
             set(row, 'isEdit', true)
         },
 
-        handleRowDelete(index)  {      
-            let item = this.studentList[index]
+        handleRowDelete(index) {      
+            let item = this.studentList[(this.currentPage - 1) * 5 + index] // 计算当前页数据在学生数组中的对应下标
             axios({
                 url: "http://localhost:8100/delstudent",
                 method : "DELETE",
@@ -153,7 +163,7 @@ export default {
             }).then(res => {
                     console.log(res.data)
                     // 如删除成功，在表格中删除该行
-                    this.studentList.splice(index, 1)
+                    this.studentList.splice((this.currentPage - 1) * 5 + index, 1)
             }) 
         },
 
@@ -213,6 +223,29 @@ export default {
                 set(row, 'isEdit', false)
             }
             
+        },
+        handleCurrentChange(currentPage) {
+          this.currentPage = currentPage;
+        },
+
+        handleSizeChange(val) {
+          this.pageSize = val;
+        },
+
+        handleSortChange(val) {
+          let sortedList = cloneDeep(this.studentList);
+          let descending = (val.order === "descending");
+          
+          sortedList.sort(this.compare(val.prop, descending));
+           
+          this.studentList = sortedList
+        },
+
+        compare(key, descending) {
+          let desc = descending ? 1 : -1;
+          return (v1, v2) => {
+              return v2[key] > v1[key] ? desc : - desc;
+          }
         }
 
     },
