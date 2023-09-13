@@ -1,9 +1,7 @@
 <template>
     <div>
-        <h1>学生课程列表</h1>
+        <h1 style="font-size: 30px">学生课程列表</h1>
         <elButton type="danger" @click="getCourseList">获取学生课程</elButton>
-        <!--button @click="getCourseList">获取学生课程</button-->
-        <!--p>{{ courseList }}</p-->
         <table class="table">
             <thead>
                 <tr>
