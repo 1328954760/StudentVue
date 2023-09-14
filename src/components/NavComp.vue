@@ -42,17 +42,17 @@
           <el-icon><setting /></el-icon>
           <span>信息跨页排序</span>
         </el-menu-item>
-        <el-menu-item index="studentAll" >
+        <el-menu-item index="studentAll">
           <el-icon><setting /></el-icon>
-          <span>功能集中展示</span>
+          <span>管理功能整合</span>
         </el-menu-item>
-        <el-menu-item index="6" disabled>
+        <el-menu-item index="histogram">
           <el-icon><setting /></el-icon>
-          <span></span>
+          <span>柱状动态显示</span>
         </el-menu-item>
-        <el-menu-item index="7" disabled>
+        <el-menu-item index="pie" >
           <el-icon><setting /></el-icon>
-          <span></span>
+          <span>饼状动态显示</span>
         </el-menu-item>
         <el-menu-item index="8" disabled>
           <el-icon><setting /></el-icon>

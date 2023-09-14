@@ -7,6 +7,8 @@ import StudentSortComp from "../components/StudentSortComp"
 import StudentAllComp from "../components/StudentAllComp"
 import CourseComp from "../components/CourseComp"
 import ContainerComp from "../components/ContainerComp"
+import HistogramComp from "../components/HistogramComp"
+import PieComp from "../components/PieComp"
 
 const routes = [{
     path:"/",
@@ -36,6 +38,16 @@ const routes = [{
         path: 'studentSort',
         name: 'studentSort',
         component: StudentSortComp
+      },
+      {
+        path: 'histogram',
+        name: 'histogram',
+        component: HistogramComp
+      },
+      {
+        path: 'pie',
+        name: 'pie',
+        component: PieComp
       },
       {
         path: 'studentAll',

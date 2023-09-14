@@ -58,7 +58,14 @@
                         </div>
                         <div v-else>
                             <el-button type="primary" @click="handleRowEdit(scope.row)">编辑</el-button>
-                            <el-button type="danger" @click="handleRowDelete(scope.$index)">删除</el-button>
+                            <el-popconfirm title="确定要删除吗?" 
+                            confirm-button-text="是"
+                            cancel-button-text="否"
+                            @confirm="handleRowDelete(scope.$index)">
+                                <template #reference>
+                                    <el-button type="danger" >删除</el-button>
+                                </template>
+                            </el-popconfirm>
                         </div>
                     </template>
                 </el-table-column>
@@ -227,7 +234,8 @@ export default {
           return (v1, v2) => {
               return v2[key] > v1[key] ? desc : - desc;
           }
-        }
+        },
+
 
     },
     //components: { ElButton }

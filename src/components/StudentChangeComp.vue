@@ -58,7 +58,14 @@
                     </div>
                     <div v-else>
                         <el-button type="primary" @click="handleRowEdit(scope.row)">编辑</el-button>
-                        <el-button type="danger" @click="handleRowDelete(scope.$index)">删除</el-button>
+                        <el-popconfirm title="确定要删除吗?" 
+                            confirm-button-text="是"
+                            cancel-button-text="否"
+                            @confirm="handleRowDelete(scope.$index)">
+                                <template #reference>
+                                    <el-button type="danger">删除</el-button>
+                                </template>
+                        </el-popconfirm>
                     </div>
                 </template>
             </el-table-column>
@@ -112,7 +119,7 @@ methods: {
     },
 
     handleRowDelete(index) {      
-        let item = this.studentList[(this.currentPage - 1) * 5 + index] // 计算当前页数据在学生数组中的对应下标
+        let item = this.studentList[index]
         axios({
             url: "http://localhost:8100/delstudent",
             method : "DELETE",
@@ -125,7 +132,7 @@ methods: {
         }).then(res => {
                 console.log(res.data)
                 // 如删除成功，在表格中删除该行
-                this.studentList.splice((this.currentPage - 1) * 5 + index, 1)
+                this.studentList.splice(index, 1)
         }) 
     },
 
